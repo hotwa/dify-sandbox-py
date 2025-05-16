@@ -4,3 +4,7 @@ starlette
 pydantic
 nodejs
 jinja2
+requests
+grpcio
+grpcio-tools
+paramiko
