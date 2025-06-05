@@ -3,7 +3,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # 安装Node.js
 RUN apt-get update && \
-    apt-get install -y curl && \
+    apt-get install -y curl git && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && \
@@ -16,7 +16,10 @@ WORKDIR /app
 COPY requirements.txt .
 
 # 使用 uv 安装基础依赖到系统环境
-RUN uv pip install --system -r requirements.txt
+RUN uv pip install --system -r requirements.txt && \
+    git clone https://github.com/sichang824/mcp-terminal && \
+    cd mcp-terminal && \
+    uv pip install -e . --system 
 
 # 复制应用代码和启动脚本
 COPY app/ ./app/
