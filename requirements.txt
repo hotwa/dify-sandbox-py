@@ -8,3 +8,4 @@ requests
 grpcio
 grpcio-tools
 paramiko
+gitingest
