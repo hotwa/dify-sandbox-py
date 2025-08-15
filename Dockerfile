@@ -10,7 +10,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-
+RUN chown -R $MAMBA_USER:$MAMBA_USER /app
 # 切换回 micromamba 用户
 USER $MAMBA_USER
 
@@ -19,7 +19,7 @@ COPY requirements.txt .
 
 # 创建并激活环境
 RUN micromamba install -y -n base python=3.12 && \
-    micromamba install -y -n base -c conda-forge fastapi uvicorn && \
+    micromamba install -y -n base -c conda-forge fastapi uvicorn rdkit openbabel requests sqlmodel seaborn && \
     micromamba install -y -n base -c conda-forge --file requirements.txt && \
     git clone https://github.com/sichang824/mcp-terminal && \
     micromamba run -n base pip install -e mcp-terminal && \
