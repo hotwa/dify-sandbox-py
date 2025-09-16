@@ -1,7 +1,7 @@
-FROM python:3.12-slim-bookworm
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+FROM mambaorg/micromamba:debian12-slim
 
 # 安装Node.js
+USER root
 RUN apt-get update && \
     apt-get install -y curl git && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
@@ -9,30 +9,31 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 设置工作目录
 WORKDIR /app
+RUN chown -R $MAMBA_USER:$MAMBA_USER /app
+# 切换回 micromamba 用户
+USER $MAMBA_USER
 
 # 复制依赖文件
 COPY requirements.txt .
 
-# 使用 uv 安装基础依赖到系统环境
-RUN uv pip install --system -r requirements.txt && \
+# 创建并激活环境
+RUN micromamba install -y -n base python=3.12 && \
+    micromamba install -y -n base -c conda-forge fastapi uvicorn rdkit openbabel requests sqlmodel seaborn && \
+    micromamba install -y -n base -c conda-forge --file requirements.txt && \
     git clone https://github.com/sichang824/mcp-terminal && \
-    cd mcp-terminal && \
-    uv pip install -e . --system 
+    micromamba run -n base pip install -e mcp-terminal && \
+    micromamba clean --all --yes
 
-# 复制应用代码和启动脚本
+# 复制应用代码
 COPY app/ ./app/
 COPY start.sh .
 
-# 创建依赖目录
-RUN mkdir -p /dependencies
+USER root
+RUN mkdir -p /dependencies && \
+    chmod +x start.sh
 
-# 设置启动脚本权限
-RUN chmod +x start.sh
-
-# 暴露端口
 EXPOSE 8194
 
-# 使用启动脚本替代直接的 uvicorn 命令
-CMD ["./start.sh"]
+# 确保使用 micromamba 环境启动
+CMD ["micromamba", "run", "-n", "base", "./start.sh"]
