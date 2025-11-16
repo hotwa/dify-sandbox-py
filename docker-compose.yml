@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        DIFY_SANDBOX_VERSION: ${DIFY_SANDBOX_VERSION}
-    image: hotwa/dify-sandbox:${DIFY_SANDBOX_VERSION}
+        DIFY_SANDBOX_VERSION: ${DIFY_SANDBOX_VERSION:-latest}
+    image: hotwa/dify-sandbox:${DIFY_SANDBOX_VERSION:-latest}
     container_name: dify-sandbox
     command: tail -f /dev/null
     env_file:
