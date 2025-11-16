@@ -10,3 +10,4 @@ grpcio-tools
 paramiko
 gitingest
 nest_asyncio
+boto3
