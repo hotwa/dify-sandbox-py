@@ -37,6 +37,14 @@ docker容器的日志
 - 镜像只有fastapi相关的依赖，任何你需要的依赖，需要自己加到python-requirements.txt中。
 - 支持环境变量配置 `PIP_MIRROR_URL`。如果你是中国去用户可以配置 `PIP_MIRROR_URL=https://pypi.tuna.tsinghua.edu.cn/simple`
 
+## boto3 support
 
+映射RUSTFS环境变量
+
+AWS_ACCESS_KEY_ID: ${RUSTFS_ACCESS_KEY}
+AWS_SECRET_ACCESS_KEY: ${RUSTFS_SECRET_KEY}
+AWS_REGION: ${AWS_REGION:-us-east-1}
+# 精确作用于 S3 的端点（优先）
+AWS_ENDPOINT_URL_S3: https://${RUSTFS_SERVER_DOMAINS}
 
 
